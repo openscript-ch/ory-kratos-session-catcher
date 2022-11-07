@@ -23,7 +23,13 @@ func (c *configuration) load() {
 }
 
 func (c *configuration) display() {
-	fmt.Println("Configuration:\n##############", "\nPORT: ", c.port, "\nREDIRECT_PATH: ", c.redirectPath, "\nREDIRECT_SESSION_PARAM_KEY: ", c.redirectSessionParamKey, "\nSESSION_COOKIE_KEY: ", c.sessionCookieKey)
+	fmt.Println(
+		"Configuration:\n##############",
+		"\nPORT: ", c.port,
+		"\nREDIRECT_PATH: ", c.redirectPath,
+		"\nREDIRECT_SESSION_PARAM_KEY: ", c.redirectSessionParamKey,
+		"\nSESSION_COOKIE_KEY: ", c.sessionCookieKey,
+	)
 }
 
 func main() {
@@ -35,8 +41,12 @@ func main() {
 		AppName: "Ory Kratos Session Catcher",
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		var sessionToken string = ctx.Cookies(c.sessionCookieKey)
+		if sessionToken == "" {
+			return ctx.SendStatus(400)
+		}
+		return ctx.Redirect(fmt.Sprintf("%s?%s=%s", c.redirectPath, c.redirectSessionParamKey, sessionToken))
 	})
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%s", c.port)))
