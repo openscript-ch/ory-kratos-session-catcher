@@ -6,7 +6,11 @@ This service can be called after a session is returned from Kratos to a browser 
 
 ## Usage
 
-Use the Docker image pushed to the Github Registry.
+Use the Docker image pushed to the Github Registry:
+
+```
+docker pull ghcr.io/openscript-ch/ory-kratos-session-catcher:latest
+```
 
 ### Environment variables
 
